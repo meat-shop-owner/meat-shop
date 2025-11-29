@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Фон только для главной страницы */
+    body {
+        background: url('/media/Meat_shop.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: white;
+        margin: 0;
+        padding: 0;
+    }
+    .hero {
+        text-align: center;
+        padding: 40px 20px 20px; /* Уменьшил верхний отступ */
+        margin-top: 60px; /* Уменьшил отступ сверху */
+    }
+    .hero h1 {
+        font-size: 4em;
+        margin: 0;
+        color: #e63946;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+    }
+    .hero h1 i {
+        font-size: 0.7em;
+    }
+    .hero p {
+        font-size: 1.4em;
+        margin: 15px 0; /* Уменьшил отступ */
+        color: #fff;
+    }
+    .hero .contacts {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 800px;
+        margin: 15px auto 30px; /* Уменьшил отступы */
+        font-size: 1.2em;
+        font-weight: bold;
+        color: white;
+        gap: 20px;
+    }
+    .categories {
+        display: flex;
+        justify-content: center;
+        gap: 80px;
+        margin: 30px 0; /* Уменьшил отступ */
+        flex-wrap: wrap;
+    }
+    .category-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: white;
+        font-size: 2em;
+        font-weight: bold;
+        transition: transform 0.3s;
+        padding: 20px 30px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+    }
+    .category-link:hover {
+        transform: scale(1.1);
+        border-color: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.2);
+    }
+    .category-link img {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 10px;
+    }
+    @media (max-width: 768px) {
+        .hero {
+            padding: 30px 10px 15px; /* Уменьшил отступы для мобильных */
+            margin-top: 70px;
+        }
+        .hero h1 {
+            font-size: 3em;
+        }
+        .hero p {
+            font-size: 1.2em;
+        }
+        .hero .contacts {
+            flex-direction: column;
+            gap: 10px;
+            margin: 10px auto 20px;
+        }
+        .categories {
+            gap: 40px;
+            margin: 20px 0;
+        }
+        .category-link {
+            font-size: 1.6em;
+            padding: 15px 20px;
+        }
+    }
+</style>
+
+<div class="hero">
+    <h1><i>🥩</i> Meat Shop</h1>
+    <p>Свежее мясо высшего качества — от фермы до вашего стола.</p>
+    <div class="contacts">
+        <div>г. Город, ул. Мясная, д. 10</div>
+        <div>+7 (XXX) XXX-XX-XX</div>
+    </div>
+</div>
+
+<div class="categories">
+    <a href="{% url 'beef' %}" class="category-link">
+        Говядина 🐄
+    </a>
+    <a href="{% url 'lamb' %}" class="category-link">
+        Баранина 🐑
+    </a>
+    <a href="{% url 'chicken' %}" class="category-link">
+        Курица 🐔
+    </a>
+</div>
+
+{% endblock %}

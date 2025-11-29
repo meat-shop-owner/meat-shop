@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #2c0b0e 0%, #1a1a1a 50%, #0b2c1a 100%);
+        color: white;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    .cart-header {
+        text-align: center;
+        padding: 60px 20px 40px;
+        margin-top: 80px;
+        position: relative;
+    }
+
+    .cart-header::before {
+        content: '🛒';
+        font-size: 4em;
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0.1;
+    }
+
+    .cart-header h1 {
+        font-size: 3.5em;
+        margin: 0;
+        color: #e63946;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        background: linear-gradient(45deg, #e63946, #ff9e00);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .cart-header p {
+        font-size: 1.4em;
+        margin: 20px 0;
+        color: #a8dadc;
+        font-weight: 300;
+    }
+
+    .cart-items {
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .cart-item {
+        background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+        padding: 25px;
+        margin-bottom: 25px;
+        border-radius: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
+        transition: all 0.3s ease;
+        border: 2px solid #e63946;
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cart-item:hover {
+        transform: translateY(-5px);
+        border-color: rgba(230, 57, 70, 0.8);
+        box-shadow: 0 10px 30px rgba(230, 57, 70, 0.2);
+    }
+
+    .item-info {
+        flex: 1;
+    }
+
+    .item-info h3 {
+        margin: 0 0 10px;
+        font-size: 1.4em;
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .item-info p {
+        margin: 8px 0;
+        font-size: 1.1em;
+        color: #a8dadc;
+    }
+
+    .item-weight {
+        font-size: 1.4em;
+        font-weight: bold;
+        color: #ffd166;
+        background: rgba(255, 209, 102, 0.1);
+        padding: 12px 20px;
+        border-radius: 10px;
+        border: 2px solid rgba(255, 209, 102, 0.3);
+        min-width: 80px;
+        text-align: center;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 0;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #e63946;
+        border-radius: 8px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(5px);
+    }
+
+    .item-remove {
+        padding: 12px 25px;
+        background: linear-gradient(135deg, #dc3545, #c1121f);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        border: 2px solid rgba(220, 53, 69, 0.3);
+        white-space: nowrap;
+    }
+
+    .item-remove:hover {
+        background: linear-gradient(135deg, #c1121f, #a71e2a);
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    }
+
+    .cart-summary {
+        background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(230, 57, 70, 0.1) 100%);
+        padding: 30px;
+        border-radius: 15px;
+        margin-top: 40px;
+        text-align: center;
+        border: 2px solid #e63946;
+        backdrop-filter: blur(10px);
+    }
+
+    .cart-summary p {
+        font-size: 1.4em;
+        margin: 15px 0;
+        color: #ffd166;
+        font-weight: bold;
+    }
+
+    .checkout-button {
+        display: inline-block;
+        padding: 15px 40px;
+        background: linear-gradient(135deg, #e63946, #d90429);
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 5px 20px rgba(230, 57, 70, 0.3);
+    }
+
+    .checkout-button:hover {
+        background: linear-gradient(135deg, #d90429, #b10422);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(230, 57, 70, 0.5);
+        color: white;
+        text-decoration: none;
+    }
+
+    .empty-cart {
+        text-align: center;
+        font-size: 1.6em;
+        margin: 80px 0;
+        color: #a8dadc;
+        padding: 60px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+        border-radius: 20px;
+        border: 2px solid #e63946;
+        backdrop-filter: blur(10px);
+    }
+
+    .empty-cart a {
+        color: #e63946;
+        text-decoration: none;
+        font-weight: bold;
+        margin-top: 20px;
+        display: inline-block;
+        padding: 12px 30px;
+        border: 2px solid #e63946;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        background: rgba(230, 57, 70, 0.1);
+    }
+
+    .empty-cart a:hover {
+        background: #e63946;
+        color: white;
+        transform: scale(1.05);
+        text-decoration: none;
+    }
+</style>
+
+<div class="cart-header">
+    <h1>🛒 Ваша корзина</h1>
+    <p>Проверьте заказ перед оформлением</p>
+</div>
+
+<div class="cart-items">
+    {% if cart_items %}
+        {% for item in cart_items %}
+            <div class="cart-item">
+                <div class="item-info">
+                    <h3>{{ item.product.name }} ({{ item.product.get_category_display }})</h3>
+                    <p><strong>Цена:</strong> {{ item.product.price_per_kg }} руб/кг</p>
+                    <p><strong>Срок годности:</strong> {{ item.product.expiration_date }}</p>
+                </div>
+                <div class="item-weight">{{ item.weight_kg }} кг</div>
+                <form method="post" action="{% url 'remove_from_cart' item.id %}">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <button type="submit" class="item-remove">Удалить</button>
+                    </div>
+                </form>
+            </div>
+        {% endfor %}
+
+        <div class="cart-summary">
+            <p><strong>Итого:</strong> {{ total_weight }} кг</p>
+            <a href="{% url 'checkout' %}" class="checkout-button">Оформить заказ</a>
+        </div>
+    {% else %}
+        <div class="empty-cart">
+            🥩 Корзина пуста<br>
+            <a href="{% url 'index' %}">Выбрать товары</a>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}```
+
+Убрал анимированный фон из корзины, оставил только градиентный цвет фона. Удалил:
+- `body::before` с радиальными градиентами
+- `body::after` с анимированными SVG паттернами
+- `@keyframes float` анимацию

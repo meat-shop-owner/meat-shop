@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ title }} | Meat Shop Admin{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">Meat Shop Админка</a>
+</h1>
+<div style="margin-top: 10px; font-size: 0.9em; color: #666;">
+    <a href="{% url 'admin:Meat_shop_order_changelist' %}?product__category=beef" style="margin-right: 15px;">🥩 Говядина (заказы)</a>
+    <a href="{% url 'admin:Meat_shop_order_changelist' %}?product__category=lamb" style="margin-right: 15px;">🐑 Баранина (заказы)</a>
+    <a href="{% url 'admin:Meat_shop_order_changelist' %}?product__category=chicken" style="margin-right: 15px;">🐔 Курица (заказы)</a>
+</div>
+{% endblock %}
+

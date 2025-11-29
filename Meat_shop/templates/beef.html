@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    body {
+        background: url('/media/Meat_shop_Cow.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: white;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin: 20px auto;
+        max-width: 600px;
+        padding: 0 20px;
+        margin-left: 50%;
+        transform: translateX(-25%);
+    }
+    .product-card {
+        background: rgba(0,0,0,0.85);
+        padding: 15px;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        transition: all 0.3s ease;
+        border: 2px solid #e63946;
+        backdrop-filter: blur(5px);
+        display: flex;
+        flex-direction: column;
+        height: fit-content;
+        min-height: 350px;
+    }
+    .product-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255,255,255,0.12);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+        border-color: #ff6b7a;
+    }
+    .product-image {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    .product-card h3 {
+        font-size: 1.3em;
+        margin: 0 0 10px;
+        color: #e63946;
+        font-weight: bold;
+        text-align: center;
+    }
+    .product-card p {
+        margin: 6px 0;
+        font-size: 1em;
+        line-height: 1.3;
+        text-align: center;
+    }
+    .product-card form {
+        margin-top: auto;
+        padding-top: 10px;
+    }
+    .form-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: center;
+    }
+    .form-label {
+        flex: 0 0 auto;
+        font-weight: bold;
+        color: #e63946;
+        font-size: 1em;
+    }
+    .weight-input {
+        flex: 0 0 60px;
+        padding: 8px;
+        border: none;
+        border-radius: 6px;
+        background: rgba(255,255,255,0.9);
+        font-size: 0.9em;
+        text-align: center;
+    }
+    .add-to-cart-btn {
+        flex: 0 0 auto;
+        padding: 8px 15px;
+        background: linear-gradient(135deg, #e63946, #d62839);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9em;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+    .add-to-cart-btn:hover {
+        background: linear-gradient(135deg, #d62839, #c1121f);
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
+    }
+    .price-tag {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #ffd166;
+        margin: 8px 0;
+    }
+</style>
+
+<div class="products-grid">
+    {% for product in products %}
+        <div class="product-card">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            {% else %}
+                <img src="https://via.placeholder.com/250x160?text=Без+фото" alt="Без фото" class="product-image">
+            {% endif %}
+            <h3>{{ product.name }}</h3>
+            <p class="price-tag">{{ product.price_per_kg }} руб/кг</p>
+            {% if product.description %}
+                <p style="font-size: 0.9em; color: #ccc;">{{ product.description|truncatewords:6 }}</p>
+            {% endif %}
+            <form method="post" action="{% url 'add_to_cart' product.id %}">
+                {% csrf_token %}
+                <div class="form-row">
+                    <span class="form-label">Кг:</span>
+                    <input type="number" name="weight_kg" step="0.1" min="0.1" value="1" required class="weight-input">
+                    <button type="submit" class="add-to-cart-btn">В корзину</button>
+                </div>
+            </form>
+        </div>
+    {% empty %}
+        <p style="grid-column: 1 / -1; text-align: center; font-size: 1.1em; color: white;">Пока нет товаров.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

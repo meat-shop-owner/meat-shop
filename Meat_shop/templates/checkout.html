@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    body {
+        background: #1a1a1a;
+        color: white;
+    }
+    .checkout-header {
+        text-align: center;
+        padding: 40px 20px;
+        margin-top: 80px;
+    }
+    .checkout-header h1 {
+        font-size: 2.8em;
+        margin: 0;
+        color: #e63946;
+    }
+    .checkout-container {
+        max-width: 800px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+    .order-summary {
+        background: rgba(255,255,255,0.1);
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .order-item:last-child {
+        border-bottom: none;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #fff;
+    }
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.15);
+        color: white;
+        font-size: 1em;
+    }
+    .form-group input::placeholder {
+        color: #aaa;
+    }
+
+    /* Выпадающий список — читаемый */
+    .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.15);
+        color: white;
+        font-size: 1em;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 16px;
+    }
+
+    .payment-hint {
+        margin-top: 15px;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 0.95em;
+        display: none;
+        background: rgba(30, 30, 30, 0.7);
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    .payment-hint.card,
+    .payment-hint.online {
+        display: block;
+    }
+
+    .warning {
+        color: #ffcc00;
+        font-weight: bold;
+        margin-top: 10px;
+        display: block;
+    }
+
+    .submit-btn {
+        background: #e63946;
+        color: white;
+        border: none;
+        padding: 14px 25px;
+        font-size: 1.1em;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        width: 100%;
+        transition: background 0.3s;
+        margin-top: 20px;
+    }
+    .submit-btn:hover {
+        background: #d90429;
+    }
+    .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        color: #457b9d;
+        text-decoration: none;
+    }
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="checkout-header">
+    <h1>📦 Оформление заказа</h1>
+    <p>Пожалуйста, заполните данные для доставки</p>
+</div>
+
+<div class="checkout-container">
+    <div class="order-summary">
+        <h2>Ваш заказ</h2>
+        {% for item in cart_items %}
+            <div class="order-item">
+                <span>{{ item.product.name }} ({{ item.weight_kg }} кг)</span>
+                <span>{{ item.product.price_per_kg }} руб/кг</span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <form method="post" id="checkout-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="customer_name">Ваше имя *</label>
+            <input type="text" name="customer_name" id="customer_name" required placeholder="Например: Иван Иванов">
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Телефон *</label>
+            <input type="text" name="phone" id="phone" required placeholder="+7 (XXX) XXX-XX-XX">
+        </div>
+
+        <div class="form-group">
+            <label for="address">Адрес доставки *</label>
+            <textarea name="address" id="address" required placeholder="Город, улица, дом, квартира" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="payment_method">Способ оплаты *</label>
+            <select name="payment_method" id="payment_method" required>
+                <option value="cash">Наличные при получении</option>
+                <option value="card">Банковской картой при получении</option>
+                <option value="online">Онлайн-оплата (СБП, Tinkoff)</option>
+            </select>
+
+            <!-- Подсказка для карты -->
+            <div class="payment-hint card" id="card-hint">
+                💳 Оплата производится при получении.<br>
+                Или по номеру телефона: <strong>+7 (999) 123-45-67</strong>
+            </div>
+
+            <!-- Подсказка для онлайн -->
+            <div class="payment-hint online" id="online-hint">
+                🌐 Для онлайн-оплаты мы свяжемся с вами по телефону:<br>
+                <strong>+7 (999) 123-45-67</strong><br>
+                <span class="warning">❗ Пожалуйста, не платите заранее — сначала дождитесь подтверждения заказа!</span>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">✅ Отправить заказ</button>
+    </form>
+
+    <a href="{% url 'cart_view' %}" class="back-link">← Вернуться в корзину</a>
+</div>
+
+<script>
+    const paymentSelect = document.getElementById('payment_method');
+    const cardHint = document.getElementById('card-hint');
+    const onlineHint = document.getElementById('online-hint');
+
+    function updateHints() {
+        cardHint.style.display = paymentSelect.value === 'card' ? 'block' : 'none';
+        onlineHint.style.display = paymentSelect.value === 'online' ? 'block' : 'none';
+    }
+
+    paymentSelect.addEventListener('change', updateHints);
+    // Инициализация при загрузке
+    updateHints();
+</script>
+
+{% endblock %}

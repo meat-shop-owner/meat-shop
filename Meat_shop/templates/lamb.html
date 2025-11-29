@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #8B4513, #A0522D);
+        color: white;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+        margin: 40px;
+        padding: 0 40px;
+    }
+    .product-card {
+        background: rgba(255,255,255,0.9);
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transition: transform 0.3s;
+        border: 2px solid #8B4513;
+        display: flex;
+        flex-direction: column;
+    }
+    .product-card:hover {
+        transform: translateY(-5px);
+        background: white;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+    }
+    .product-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+    }
+    .product-card h3 {
+        font-size: 1.5em;
+        margin: 0 0 15px;
+        color: #8B4513;
+        text-align: center;
+        font-weight: bold;
+    }
+    .product-card p {
+        margin: 8px 0;
+        font-size: 1.1em;
+        text-align: center;
+        line-height: 1.4;
+        color: #333;
+    }
+    .product-card form {
+        margin-top: 20px;
+    }
+    .form-row {
+        display: flex;
+        gap: 0;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #8B4513;
+        border-radius: 8px;
+        overflow: hidden;
+        background: white;
+    }
+    .form-label {
+        flex: 0 0 auto;
+        font-weight: bold;
+        color: #8B4513;
+        font-size: 1.1em;
+        padding: 12px 15px;
+        background: #F5F5DC;
+        border-right: 2px solid #8B4513;
+    }
+    .weight-input {
+        flex: 0 0 80px;
+        padding: 12px;
+        border: none;
+        background: white;
+        font-size: 1em;
+        text-align: center;
+        outline: none;
+        color: #333;
+    }
+    .weight-input:focus {
+        background: #f8f9fa;
+    }
+    .add-to-cart-btn {
+        flex: 1;
+        padding: 12px 20px;
+        background: #8B4513;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: bold;
+        transition: background 0.3s;
+        white-space: nowrap;
+    }
+    .add-to-cart-btn:hover {
+        background: #654321;
+    }
+    .price-tag {
+        font-size: 1.4em;
+        font-weight: bold;
+        color: #8B4513;
+        margin: 10px 0;
+        text-align: center;
+    }
+    .expiration-date {
+        color: #666;
+        font-size: 1em;
+    }
+    .empty-products {
+        grid-column: 1 / -1;
+        text-align: center;
+        font-size: 1.3em;
+        color: #333;
+        padding: 40px;
+        background: white;
+        border-radius: 15px;
+        border: 2px solid #8B4513;
+    }
+</style>
+
+<div class="products-grid">
+    {% for product in products %}
+        <div class="product-card">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            {% else %}
+                <img src="https://via.placeholder.com/400x200?text=Без+фото" alt="Без фото" class="product-image">
+            {% endif %}
+            <h3>{{ product.name }}</h3>
+            <p class="price-tag">{{ product.price_per_kg }} руб/кг</p>
+            <p class="expiration-date"><strong>Срок годности:</strong> {{ product.expiration_date }}</p>
+            {% if product.description %}
+                <p style="font-size: 1em; color: #555;">{{ product.description }}</p>
+            {% endif %}
+            <form method="post" action="{% url 'add_to_cart' product.id %}">
+                {% csrf_token %}
+                <div class="form-row">
+                    <span class="form-label">Кг</span>
+                    <input type="number" name="weight_kg" step="0.1" min="0.1" value="1" required class="weight-input">
+                    <button type="submit" class="add-to-cart-btn">В корзину</button>
+                </div>
+            </form>
+        </div>
+    {% empty %}
+        <div class="empty-products">
+            Пока нет товаров в этой категории
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

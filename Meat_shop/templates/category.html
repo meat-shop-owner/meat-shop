@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 style="text-align: center; margin-bottom: 30px;">{{ category_name }}</h1>
+
+{% if products %}
+    <div class="category-grid">
+    {% for product in products %}
+        <div class="category-card">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+                <img src="https://via.placeholder.com/300x150?text={{ product.name|urlencode }}" alt="{{ product.name }}">
+            {% endif %}
+            <h3>{{ product.name }}</h3>
+            <p><strong>Цена:</strong> {{ product.price_per_kg }} руб/кг</p>
+            <p><strong>Срок годности:</strong> {{ product.expiration_date }}</p>
+            {% if product.description %}
+                <p>{{ product.description|truncatewords:15 }}</p>
+            {% endif %}
+
+            <!-- Форма добавления в корзину -->
+            <form method="post" action="{% url 'add_to_cart' product.id %}">
+                {% csrf_token %}
+                <label>Кг:</label>
+                <input type="number" name="weight_kg" step="0.1" min="0.1" value="1" required style="width: 80px; padding: 5px;">
+                <button type="submit" style="margin-top: 10px; background: #007bff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+                    В корзину
+                </button>
+            </form>
+        </div>
+    {% endfor %}
+    </div>
+{% else %}
+    <p style="text-align: center; font-size: 1.1em;">Пока нет товаров в этой категории.</p>
+{% endif %}
+
+<div style="text-align: center; margin-top: 30px;">
+    <a href="{% url 'index' %}" style="display: inline-block; padding: 10px 20px; background: #6c757d; color: white; text-decoration: none; border-radius: 5px;">
+        ← Назад на главную
+    </a>
+</div>
+{% endblock %}
