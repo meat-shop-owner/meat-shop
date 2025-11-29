@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: mymeat-shop
+    runtime: python
+    region: frankfurt
+    env:
+      - key: DEBUG
+        value: 'False'
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+      python manage.py migrate
+    startCommand: gunicorn mymeat.wsgi:application
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mymeat-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+
+databases:
+  - name: mymeat-db
+    databaseName: mymeat_db
+    user: mymeat_user

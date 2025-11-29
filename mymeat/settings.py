@@ -130,3 +130,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Статические файлы (CSS, JS, изображения сайта)
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
+
+ALLOWED_HOSTS = ['*']
+
+if not DEBUG:
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
